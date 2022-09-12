@@ -54,6 +54,7 @@ public:
     static const int statMean = 8;
     static const int statStdDev = 16;
     static const int statIdw = 32;
+    static const int statMedian = 64;
 
     struct error : public std::runtime_error
     {
@@ -100,6 +101,9 @@ private:
     DataPtr m_stdDev;
     DataPtr m_idw;
     DataPtr m_idwDist;
+    DataPtr m_median;
+
+    std::unique_ptr<Raster<std::vector<double>>> m_medianBuffer;
 
     int m_outputTypes;
 

@@ -73,7 +73,7 @@ void GDALWriter::addArgs(ProgramArgs& args)
     args.add("gdalopts", "GDAL driver options (name=value,name=value...)",
         m_options);
     args.add("output_type", "Statistics produced ('min', 'max', 'mean', "
-        "'idw', 'count', 'stdev' or 'all')", m_outputTypeString, {"all"} );
+        "'idw', 'count', 'stdev', 'median', or 'all')", m_outputTypeString, {"all"} );
     args.add("data_type", "Data type for output grid ('int8', 'uint64', "
         "'float', etc.)", m_dataType, Dimension::Type::Double);
     args.add("window_size", "Cell distance for fallback interpolation",
@@ -128,6 +128,8 @@ void GDALWriter::initialize()
             m_outputTypes |= GDALGrid::statIdw;
         else if (ts == "stdev")
             m_outputTypes |= GDALGrid::statStdDev;
+        else if (ts == "stdev")
+            m_outputTypes |= GDALGrid::statMedian;
         else
             throwError("Invalid output type: '" + ts + "'.");
     }

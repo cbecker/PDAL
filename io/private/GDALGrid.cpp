@@ -81,6 +81,11 @@ GDALGrid::GDALGrid(double xOrigin, double yOrigin, size_t width, size_t height, 
         m_mean.reset(new Rasterd(limits));
     if (m_outputTypes & statStdDev)
         m_stdDev.reset(new Rasterd(limits));
+    if (m_outputTypes & statMedian)
+    {
+        m_median.reset(new Rasterd(limits));
+        m_medianBuffer.reset(new Raster<std::vector<double>>(limits));
+    }
 }
 
 int GDALGrid::width() const
@@ -139,6 +144,10 @@ void GDALGrid::expandToInclude(double x, double y)
         m_mean->expandToInclude(x, y);
     if (m_outputTypes & statStdDev)
         m_stdDev->expandToInclude(x, y);
+    if (m_outputTypes & statMedian) {
+        m_median->expandToInclude(x, y);
+        m_medianBuffer->expandToInclude(x, y);
+    }
 }
 
 
@@ -157,6 +166,8 @@ int GDALGrid::numBands() const
     if (m_outputTypes & statIdw)
         num++;
     if (m_outputTypes & statStdDev)
+        num++;
+    if (m_outputTypes & statMedian)
         num++;
     return num;
 }
@@ -444,6 +455,9 @@ void GDALGrid::update(size_t i, size_t j, double val, double dist)
             }
         }
     }
+
+    if (m_median)
+        m_medianBuffer->at(i, j).emplace_back(val);
 }
 
 void GDALGrid::finalize()
@@ -464,6 +478,19 @@ void GDALGrid::finalize()
                 if (!std::isnan(distSum))
                     (*m_idw)[i] /= distSum;
             }
+
+    if (m_median)
+        for (size_t i = 0; i < m_median->size(); ++i)
+        {
+            std::vector<double>& cellValues = (*m_medianBuffer)[i];
+            const size_t numCellValues = cellValues.size();
+            if (numCellValues > 0) {
+                const size_t nthEl = (cellValues.size() - 1) / 2;
+                std::nth_element(cellValues.begin(), cellValues.begin() + nthEl, cellValues.end());
+                const double medianValue = cellValues[nthEl];
+                (*m_median)[i] = medianValue;
+            }
+        }
 
     if (m_windowSize > 0)
         windowFill();
@@ -489,6 +516,8 @@ void GDALGrid::fillNodata(int i, int j)
         m_idw->at(i, j) = std::numeric_limits<double>::quiet_NaN();
     if (m_stdDev)
         m_stdDev->at(i, j) = std::numeric_limits<double>::quiet_NaN();
+    if (m_median)
+        m_median->at(i, j) = std::numeric_limits<double>::quiet_NaN();
 }
 
 
@@ -552,6 +581,8 @@ void GDALGrid::windowFillCell(int srcI, int srcJ, int dstI, int dstJ, double dis
         m_idw->at(dstI, dstJ) += m_idw->at(srcI, srcJ) / distance;
     if (m_stdDev)
         m_stdDev->at(dstI, dstJ) += m_stdDev->at(srcI, srcJ) / distance;
+    if (m_median)
+        m_median->at(dstI, dstJ) += m_median->at(srcI, srcJ) / distance;
 }
 
 } //namespace pdal
