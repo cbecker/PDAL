@@ -48,6 +48,11 @@ CREATE_STATIC_STAGE(MergeFilter, s_info)
 
 std::string MergeFilter::getName() const { return s_info.name; }
 
+bool MergeFilter::processOne(PointRef& point)
+{
+    return true;
+}
+
 void MergeFilter::ready(PointTableRef table)
 {
     SpatialReference srs = getSpatialReference();

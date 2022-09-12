@@ -63,8 +63,8 @@ private:
     virtual void addDimensions(PointLayoutPtr layout);
     virtual void filter(PointView& view);
 
-    ELMFilter& operator=(const ELMFilter&); // not implemented
-    ELMFilter(const ELMFilter&);            // not implemented
+    ELMFilter& operator=(const ELMFilter&) = delete; // not implemented
+    ELMFilter(const ELMFilter&) = delete;            // not implemented
 };
 
 } // namespace pdal
