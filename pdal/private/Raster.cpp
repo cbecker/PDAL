@@ -111,5 +111,6 @@ Utils::StatusWithReason Raster<T>::expand(int newWidth, int newHeight, int xshif
 
 // Instantiate Raster<double>
 template class Raster<double>;
+template class Raster<std::vector<double>>;
 
 } // namespace pdal

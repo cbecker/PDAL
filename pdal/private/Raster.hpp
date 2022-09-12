@@ -224,6 +224,7 @@ private:
 
 using Rasterd = Raster<double>;
 extern template class Raster<double>;
+extern template class Raster<std::vector<double>>;
 
 } // namespace pdal
 
