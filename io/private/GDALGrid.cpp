@@ -187,6 +187,8 @@ double *GDALGrid::data(const std::string& name)
          return m_idw->data();
     if (name == "stdev" && (m_outputTypes & statStdDev))
         return m_stdDev->data();
+    if (name == "median" && (m_outputTypes & statMedian))
+        return m_median->data();
     return nullptr;
 }
 
@@ -563,6 +565,8 @@ void GDALGrid::windowFill(int dstI, int dstJ)
             m_idw->at(dstI, dstJ) /= distSum;
         if (m_stdDev)
             m_stdDev->at(dstI, dstJ) /= distSum;
+        if (m_median)
+            m_median->at(dstI, dstJ) /= distSum;
     }
     else
         fillNodata(dstI, dstJ);

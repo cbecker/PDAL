@@ -128,7 +128,7 @@ void GDALWriter::initialize()
             m_outputTypes |= GDALGrid::statIdw;
         else if (ts == "stdev")
             m_outputTypes |= GDALGrid::statStdDev;
-        else if (ts == "stdev")
+        else if (ts == "median")
             m_outputTypes |= GDALGrid::statMedian;
         else
             throwError("Invalid output type: '" + ts + "'.");
@@ -328,6 +328,9 @@ void GDALWriter::doneFile()
     src = m_grid->data("stdev");
     if (src && err == gdal::GDALError::None)
         err = raster.writeBand(src, srcNoData, bandNum++, "stdev");
+    src = m_grid->data("median");
+    if (src && err == gdal::GDALError::None)
+        err = raster.writeBand(src, srcNoData, bandNum++, "median");    
     if (err != gdal::GDALError::None)
         throwError(raster.errorMsg());
 

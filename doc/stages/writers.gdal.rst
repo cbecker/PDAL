@@ -157,7 +157,7 @@ nodata
 
 output_type
     A comma separated list of statistics for which to produce raster layers.
-    The supported values are "min", "max", "mean", "idw", "count", "stdev"
+    The supported values are "min", "max", "mean", "idw", "count", "stdev", "median",
     and "all".  The option may be specified more than once. [Default: "all"]
 
 .. _window_size:
