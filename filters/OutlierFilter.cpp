@@ -109,10 +109,13 @@ Indices OutlierFilter::processStatistical(PointViewPtr inView)
     // we increase the count by one because the query point itself will
     // be included with a distance of 0
     point_count_t count = m_meanK + 1;
-    PointIdList indices(count);
-    std::vector<double> sqr_dists(count);
+   
+    #pragma omp parallel for
     for (PointId i = 0; i < np; ++i)
     {
+
+        PointIdList indices(count);
+        std::vector<double> sqr_dists(count);
 
         index.knnSearch(i, count, &indices, &sqr_dists);
 
@@ -128,6 +131,8 @@ Indices OutlierFilter::processStatistical(PointViewPtr inView)
     size_t n(0);
     double M1(0.0);
     double M2(0.0);
+
+    #pragma omp parallel for
     for (auto const& d : distances)
     {
         size_t n1(n);

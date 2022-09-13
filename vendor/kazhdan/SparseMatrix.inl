@@ -307,7 +307,7 @@ int SparseMatrix<T>::SolveGS( const std::vector< std::vector< int > >& mcIndices
 {
     int sum=0;
 
-    auto iterate = [&M, &diagonal, &b, &x](std::vector<int>& indices)
+    auto iterate = [&M, &diagonal, &b, &x, threads](std::vector<int>& indices)
     {
 #pragma omp parallel for num_threads( threads )
         for( int k=0 ; k<int( indices.size() ) ; k++ )

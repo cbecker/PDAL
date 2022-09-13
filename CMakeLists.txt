@@ -260,6 +260,15 @@ target_include_directories(${PDAL_BASE_LIB_NAME}
         ${NLOHMANN_INCLUDE_DIR}
         ${GDAL_INCLUDE_DIR}
 )
+
+find_package(OpenMP QUIET REQUIRED)
+mark_as_advanced(CLEAR OpenMP_INCLUDE_DIRS)
+mark_as_advanced(CLEAR OpenMP_LIBRARIES)
+if(NOT OpenMP_CXX_FOUND)
+    message(FATAL_ERROR "This project requires the OpenMP library.")
+endif()
+
+
 target_link_libraries(${PDAL_BASE_LIB_NAME}
     PRIVATE
         ${CMAKE_THREAD_LIBS_INIT}
@@ -276,6 +285,7 @@ target_link_libraries(${PDAL_BASE_LIB_NAME}
         ${PDAL_ARBITER_LIB_NAME}
         ${PDAL_KAZHDAN_LIB_NAME}
         ${PDAL_LAZPERF_LIB_NAME}
+        OpenMP::OpenMP_CXX
     INTERFACE
         ${PDAL_LIBDIR}
 )
